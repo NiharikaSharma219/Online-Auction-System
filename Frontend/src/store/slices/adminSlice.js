@@ -207,4 +207,16 @@ export const deleteAuctionItemByAdmin = (id) => async (dispatch) => {
   }
 };
 
+// adminSlice.js mein ye function add/export kar do:
+export const getSinglePaymentProof = (id) => async (dispatch) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/paymentproof/${id}`, {
+      withCredentials: true,
+    });
+    // dispatch success action
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default adminSlice.reducer;
