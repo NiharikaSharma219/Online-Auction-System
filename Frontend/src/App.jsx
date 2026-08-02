@@ -1,0 +1,60 @@
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SideDrawer from './layout/SideDrawer';
+import Home from './pages/Home';
+import SignUp from './pages/SignUp';
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from 'react-redux';
+import { fetchLeaderboard, fetchUser, getUser } from './store/slices/userSlice'; // Path confirm kar lein
+import Login from './pages/login';
+import SubmitCommission from './pages/SubmitCommission';
+import HowItWorks from './pages/HowItWorks';
+import About from './pages/About';
+import { getAllAuctionItems } from './store/slices/auctionSlice';
+import AuctionItem from './pages/AuctionItem';
+import Leaderboard from './pages/homeSubComponents/Leaderboard';
+import LeaderboardPage from "./pages/LeaderboardPage";
+import Auctions from './pages/Auctions';
+import CreateAuction from './pages/CreateAuction';
+import ViewMyAuctions from './pages/ViewMyAuctions';
+import AuctionDetail from './pages/AuctionDetail';
+import Dashboard from './pages/Dashboard/Dashboard';
+
+const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchUser());
+    dispatch(getAllAuctionItems());
+    dispatch(fetchLeaderboard());
+  }, []);
+
+  return (
+    <Router>
+      <SideDrawer />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/submit-commission" element={<SubmitCommission />} />
+        <Route path="/how-it-works-info" element={<HowItWorks />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/auction/item/:id" element={<AuctionItem />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/auctions" element={<Auctions />} />
+        <Route path="/create-auction" element={<CreateAuction />} />
+        <Route path="/view-my-auctions" element={<ViewMyAuctions />} />
+        <Route path="/auction/details/:id" element={<AuctionDetail />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+      <ToastContainer position="top-right" />
+    </Router>
+  );
+};
+
+export default App;
