@@ -83,7 +83,7 @@ export const createAuction = (data) => async (dispatch) => {
   dispatch(auctionSlice.actions.createAuctionRequest());
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/v1/auctionitem/create", // Apne backend port/route ke hisab se URL match kar lijiye
+      "https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/create", // Apne backend port/route ke hisab se URL match kar lijiye
       data,
       {
         withCredentials: true,
@@ -106,7 +106,7 @@ export const getAllAuctionItems = () => async (dispatch) => {
   dispatch(auctionSlice.actions.getAllAuctionItemRequest());
   try {
     const response = await axios.get(
-      "http://localhost:5000/api/v1/auctionitem/allItems",
+      "https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/allItems",
       { withCredentials: true }
     );
     dispatch(
@@ -123,7 +123,7 @@ export const getMyAuctions = () => async (dispatch) => {
   dispatch(auctionSlice.actions.getMyAuctionItemRequest());
   try {
     const response = await axios.get(
-      "http://localhost:5000/api/v1/auctionitem/myItems", // 👈 /myitems route
+      "https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/myItems", // 👈 /myitems route
       { withCredentials: true }
     );
     dispatch(
@@ -142,7 +142,7 @@ export const getAuctionDetail = (id) => async (dispatch) => {
   dispatch(auctionSlice.actions.getAuctionDetailRequest());
   try {
     const response = await axios.get(
-      `http://localhost:5000/api/v1/auctionitem/auction/${id}`,
+      `https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/auction/${id}`,
       { withCredentials: true }
     );
     dispatch(
@@ -158,7 +158,7 @@ export const getAuctionDetail = (id) => async (dispatch) => {
 export const deleteAuction = (id) => async (dispatch) => {
   try {
     const response = await axios.delete(
-      `http://localhost:5000/api/v1/auctionitem/delete/${id}`,
+      `https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/delete/${id}`,
       { withCredentials: true }
     );
     toast.success(response.data.message || "Auction deleted successfully!");
@@ -172,7 +172,7 @@ export const deleteAuction = (id) => async (dispatch) => {
 export const republishAuction = (id, data) => async (dispatch) => {
   try {
     const response = await axios.put(
-      `http://localhost:5000/api/v1/auctionitem/item/republish/${id}`,
+      `https://online-auction-system-wel2.onrender.com/api/v1/auctionitem/item/republish/${id}`,
       data,
       {
         withCredentials: true,

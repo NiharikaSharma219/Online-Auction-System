@@ -24,7 +24,7 @@ export const placeBid = (id, data) => async (dispatch) => {
   dispatch(bidSlice.actions.placeBidRequest());
   try {
     const response = await axios.post(
-      `http://localhost:5000/api/v1/bid/place/${id}`,
+      `https://online-auction-system-wel2.onrender.com/api/v1/bid/place/${id}`,
       data,
       {
         withCredentials: true,

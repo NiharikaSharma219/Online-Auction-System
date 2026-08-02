@@ -84,7 +84,7 @@ const adminSlice = createSlice({
   },
 });
 
-const BASE_URL = "http://localhost:5000/api/v1/admin";
+const BASE_URL = "https://online-auction-system-wel2.onrender.com/api/v1/admin";
 
 // 1. GET MONTHLY REVENUE & USER STATS (FIXED: Payload path)
 export const getMonthlyRevenue = () => async (dispatch) => {
