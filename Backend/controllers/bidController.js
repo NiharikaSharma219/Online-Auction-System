@@ -18,11 +18,11 @@ export const placeBid = catchAsyncErrors(async (req, res, next) => {
   }
 
   // 1. Check if Auction has started (With 2 Min Buffer for Timezone Differences)
-  const startTime = new Date(auctionItem.startTime).getTime();
-  const currentTime = new Date().getTime();
-  if (startTime - currentTime > 2 * 60 * 1000) {
-    return next(new ErrorHandler("Auction has not started yet.", 400));
-  }
+  //const startTime = new Date(auctionItem.startTime).getTime();
+  //const currentTime = new Date().getTime();
+  //if (startTime - currentTime > 2 * 60 * 1000) {
+    //return next(new ErrorHandler("Auction has not started yet.", 400));
+  //}
 
   // 2. Check if Auction has ended
   const endTime = new Date(auctionItem.endTime).getTime();
