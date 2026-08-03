@@ -13,9 +13,9 @@ export const checkAuctionEndTime = catchAsyncErrors(async (req, res, next) => {
         return next(new ErrorHandler("Auction not found.", 404));
     }
     const now = new Date();
-    if(new Date(auction.startTime) > now){
-        return next(new ErrorHandler("Auction has not started yet.",400));
-    }
+    //if(new Date(auction.startTime) > now){
+    //    return next(new ErrorHandler("Auction has not started yet.",400));
+    //}
     if(new Date(auction.endTime) < now){
         return next(new ErrorHandler("Auction is ended .",400));
     }
