@@ -25,60 +25,63 @@ export const endedAuctionCron = () => {
                 try {
                     console.log("Processing auction ID:", auction._id);
 
-                    // Fetch highest bidder
                     const highestBidder = await Bid.findOne({
-                        auctionItem: auction._id,
+                        $or: [
+                            { auctionItem: auction._id },
+                            { auctionItem: auction._id.toString() }
+                        ]
                     }).sort({ amount: -1 });
 
-                    console.log("Highest Bidder Found:", highestBidder ? highestBidder._id : "NO BIDDER FOR THIS ITEM");
-
-                    const commissionAmount = await calculateCommission(auction._id);
-                    auction.commissionCalculated = true;
-
-                    const auctioneer = await User.findById(auction.createdBy);
+                    console.log("Highest Bidder Details:", highestBidder ? highestBidder._id : "NO BIDDER FOUND");
 
                     if (highestBidder) {
-                        auction.highestBidder = highestBidder.bidder.id;
+                        const commissionAmount = await calculateCommission(auction._id);
+                        auction.commissionCalculated = true;
+
+                        const bidderId = highestBidder.bidder?.id || highestBidder.bidder;
+                        auction.highestBidder = bidderId;
                         await auction.save();
 
-                        const bidder = await User.findById(highestBidder.bidder.id);
+                        const bidder = await User.findById(bidderId);
+                        const auctioneer = await User.findById(auction.createdBy);
 
-                        await User.findByIdAndUpdate(
-                            bidder._id,
-                            {
-                                $inc: {
-                                    moneySpent: highestBidder.amount,
-                                    auctionWon: 1,
+                        if (bidder && auctioneer) {
+                            await User.findByIdAndUpdate(
+                                bidder._id,
+                                {
+                                    $inc: {
+                                        moneySpent: highestBidder.amount,
+                                        auctionWon: 1,
+                                    },
                                 },
-                            },
-                            { returnDocument: 'after' }
-                        );
+                                { returnDocument: 'after' }
+                            );
 
-                        await User.findByIdAndUpdate(
-                            auctioneer._id,
-                            {
-                                $inc: {
-                                    unpaidCommissions: commissionAmount,
+                            await User.findByIdAndUpdate(
+                                auctioneer._id,
+                                {
+                                    $inc: {
+                                        unpaidCommissions: commissionAmount,
+                                    },
                                 },
-                            },
-                            { returnDocument: 'after' }
-                        );
+                                { returnDocument: 'after' }
+                            );
 
-                        const subject = `Congratulations! You won the auction for ${auction.title}`;
-                        const message = `Dear ${bidder.userName},\n\nCongratulations! You have won the auction for ${auction.title}.\n\nBefore proceeding for payment, contact your auctioneer via email: ${auctioneer.email} \n\nPlease complete your payment using one of the following methods:\n\n1. **Bank Transfer**:\n- Account Name: ${auctioneer.paymentMethods?.bankTransfer?.bankAccountName || "N/A"}\n- Account Number: ${auctioneer.paymentMethods?.bankTransfer?.bankAccountNumber || "N/A"}\n- Bank Name: ${auctioneer.paymentMethods?.bankTransfer?.bankName || "N/A"}\n- IFSC Code: ${auctioneer.paymentMethods?.bankTransfer?.ifscCode || "N/A"}\n\n2. **UPI**:\n- Pay via UPI ID: ${auctioneer.paymentMethods?.upi?.upiId || "N/A"}\n\n3. **Cash on Delivery (COD)**:\n- If you prefer COD, you must pay 20% of the total amount upfront before delivery.\n\nThank you for participating!\n\nBest regards,\nAuction Team`;
+                            const subject = `Congratulations! You won the auction for ${auction.title}`;
+                            const message = `Dear ${bidder.userName},\n\nCongratulations! You have won the auction for ${auction.title}.\n\nBefore proceeding for payment, contact your auctioneer via email: ${auctioneer.email} \n\nPlease complete your payment using one of the following methods:\n\n1. **Bank Transfer**:\n- Account Name: ${auctioneer.paymentMethods?.bankTransfer?.bankAccountName || "N/A"}\n- Account Number: ${auctioneer.paymentMethods?.bankTransfer?.bankAccountNumber || "N/A"}\n- Bank Name: ${auctioneer.paymentMethods?.bankTransfer?.bankName || "N/A"}\n- IFSC Code: ${auctioneer.paymentMethods?.bankTransfer?.ifscCode || "N/A"}\n\n2. **UPI**:\n- Pay via UPI ID: ${auctioneer.paymentMethods?.upi?.upiId || "N/A"}\n\n3. **Cash on Delivery (COD)**:\n- If you prefer COD, you must pay 20% of the total amount upfront before delivery.\n\nThank you for participating!\n\nBest regards,\nAuction Team`;
 
-                        console.log("SENDING EMAIL TO HIGHEST BIDDER:", bidder.email);
+                            console.log("SENDING EMAIL TO HIGHEST BIDDER:", bidder.email);
 
-                        await sendEmail({
-                            email: bidder.email,
-                            subject,
-                            message
-                        });
+                            await sendEmail({
+                                email: bidder.email,
+                                subject,
+                                message
+                            });
 
-                        console.log("SUCCESSFULLY EMAIL SENT TO HIGHEST BIDDER");
+                            console.log("SUCCESSFULLY EMAIL SENT TO HIGHEST BIDDER");
+                        }
                     } else {
-                        console.log("Skipping email as no bidder was found for auction:", auction.title);
-                        await auction.save();
+                        console.log("Skipping processing as no bidder was found for auction:", auction.title);
                     }
                 } catch (error) {
                     console.error("Error processing single auction in cron:", error.message);
@@ -89,6 +92,3 @@ export const endedAuctionCron = () => {
         }
     });
 };
-
-
-
