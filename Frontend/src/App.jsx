@@ -20,7 +20,7 @@ import CreateAuction from './pages/CreateAuction';
 import ViewMyAuctions from './pages/ViewMyAuctions';
 import AuctionDetail from './pages/AuctionDetail';
 import Dashboard from './pages/Dashboard/Dashboard';
-
+import Contact from "./pages/Contact"
 const App = () => {
   const dispatch = useDispatch();
 
@@ -51,6 +51,7 @@ const App = () => {
         <Route path="/view-my-auctions" element={<ViewMyAuctions />} />
         <Route path="/auction/details/:id" element={<AuctionDetail />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
       <ToastContainer position="top-right" />
     </Router>
