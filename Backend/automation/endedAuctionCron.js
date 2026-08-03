@@ -24,12 +24,16 @@ export const endedAuctionCron = () => {
 
                 try {
                     console.log("Processing auction ID:", auction._id);
-                    const commissionAmount = await calculateCommission(auction._id);
-                    auction.commissionCalculated = true;
 
+                    // Fetch highest bidder
                     const highestBidder = await Bid.findOne({
                         auctionItem: auction._id,
                     }).sort({ amount: -1 });
+
+                    console.log("Highest Bidder Found:", highestBidder ? highestBidder._id : "NO BIDDER FOR THIS ITEM");
+
+                    const commissionAmount = await calculateCommission(auction._id);
+                    auction.commissionCalculated = true;
 
                     const auctioneer = await User.findById(auction.createdBy);
 
@@ -73,6 +77,7 @@ export const endedAuctionCron = () => {
 
                         console.log("SUCCESSFULLY EMAIL SENT TO HIGHEST BIDDER");
                     } else {
+                        console.log("Skipping email as no bidder was found for auction:", auction.title);
                         await auction.save();
                     }
                 } catch (error) {
@@ -84,3 +89,6 @@ export const endedAuctionCron = () => {
         }
     });
 };
+
+
+
